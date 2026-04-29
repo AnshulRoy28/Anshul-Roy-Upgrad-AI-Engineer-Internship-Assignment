@@ -1,0 +1,202 @@
+Code Structure Plan — AI Mock Interview Coach
+
+Guiding Principles for the Structure
+Three constraints shape every decision here:
+
+ADK primitives should do the orchestration work — the Python code should wire agents together, not manually sequence them with imperative logic
+Session state is the single source of truth — agents never pass data directly to each other, everything flows through state
+Each file should have an obvious reason to exist — no utils.py graveyards
+
+
+Folder Structure
+interview-coach/
+│
+├── main.py                      # CLI entry point — collects input, starts runner
+├── config.py                    # Model name, constants, env vars
+├── requirements.txt
+├── README.md
+│
+├── prompts/                     # One .md file per agent — loaded at runtime
+│   ├── profiler.md
+│   ├── interviewer.md
+│   ├── turn_evaluator.md
+│   └── coach.md
+│
+├── agents/                      # LlmAgent definitions — one file per agent
+│   ├── __init__.py
+│   ├── profiler.py
+│   ├── interviewer.py
+│   ├── turn_evaluator.py
+│   └── coach.py
+│
+├── tools/                       # ADK FunctionTools attached to agents
+│   ├── __init__.py
+│   └── cli_input.py             # get_candidate_response() — captures user input
+│
+├── orchestration/               # ADK composite agents — the wiring layer
+│   ├── __init__.py
+│   ├── interview_loop.py        # LoopAgent: Interviewer + TurnEvaluator
+│   └── pipeline.py              # SequentialAgent: full end-to-end pipeline
+│
+└── state/
+    ├── __init__.py
+    └── schema.py                # State keys as constants + helper read/write fns
+
+File-by-File Breakdown
+config.py
+Single place for everything that might change. Model name, max turns, ADK app name. No magic strings anywhere else in the codebase.
+MODEL = "gemini-2.0-flash"
+MAX_INTERVIEW_TURNS = 7
+APP_NAME = "interview-coach"
+
+state/schema.py
+Defines the shape of session state as string constants and provides lightweight helpers. This file is the contract between all agents — if you want to know what's in state at any point, this is where you look.
+# Key constants
+CANDIDATE_ROLE = "candidate_role"
+CANDIDATE_BACKGROUND = "candidate_background"
+FOCUS_AREA = "focus_area"
+SESSION_STRATEGY = "session_strategy"       # Written by Profiler
+CONVERSATION_HISTORY = "conversation_history"
+TURN_SCORES = "turn_scores"                 # List — appended by Turn Evaluator
+LAST_EVALUATOR_SIGNAL = "last_evaluator_signal"
+CURRENT_TURN = "current_turn"
+INTERVIEW_COMPLETE = "interview_complete"    # Boolean — LoopAgent termination flag
+COACHING_REPORT = "coaching_report"         # Written by Coach
+Helpers like append_turn_score(state, score) and get_last_signal(state) live here too — keeps agent files clean.
+
+prompts/ — All four .md files
+Loaded at runtime by each agent file using a simple load_prompt(filename) helper in config.py. Keeping prompts as flat files means you can iterate on them without touching Python. The assignment also explicitly asks for a prompts/ folder, so this doubles as a deliverable.
+
+tools/cli_input.py
+This is the one non-obvious file. The problem it solves: the Interviewer needs to ask a question and then wait for the candidate's response. In a CLI, that means calling input(). But inside an ADK LoopAgent, we can't just call input() imperatively — we need to expose it as a tool the Interviewer agent can invoke.
+get_candidate_response(prompt: str) -> str
+    # Prints the interviewer's question to the terminal
+    # Blocks on input()
+    # Returns the candidate's raw text response
+    # Also writes the exchange to conversation_history in state
+This tool is attached only to the Interviewer agent. No other agent gets it.
+
+agents/profiler.py
+Defines an LlmAgent with:
+
+The profiler prompt loaded from prompts/profiler.md
+output_key = STATE.SESSION_STRATEGY — ADK writes the agent's response directly to this state key
+No tools
+Runs once, terminates
+
+
+agents/interviewer.py
+Defines an LlmAgent with:
+
+The interviewer prompt loaded from prompts/interviewer.md
+The get_candidate_response tool attached
+Reads SESSION_STRATEGY and LAST_EVALUATOR_SIGNAL from state at every turn
+Its job each turn: decide the next question (informed by signal), call the tool with it, tool handles I/O
+
+
+agents/turn_evaluator.py
+Defines an LlmAgent with:
+
+The evaluator prompt loaded from prompts/turn_evaluator.md
+output_key = STATE.LAST_EVALUATOR_SIGNAL
+No tools — reads from state, writes to state
+After writing, a callback appends the score to TURN_SCORES and increments CURRENT_TURN
+Also sets INTERVIEW_COMPLETE = True if current_turn >= MAX_TURNS or if the evaluator emits a wrap_up signal
+
+The callback that checks termination condition lives here as a small after_agent_callback. This is cleaner than putting termination logic in the orchestration layer.
+
+agents/coach.py
+Defines an LlmAgent with:
+
+The coach prompt loaded from prompts/coach.md
+output_key = STATE.COACHING_REPORT
+No tools
+Receives the full session state — full conversation history, all turn scores, session strategy — in its context
+Runs once, produces Markdown
+
+
+orchestration/interview_loop.py
+Defines a LoopAgent wrapping two agents in sequence:
+InterviewLoop = LoopAgent(
+    name = "interview_loop",
+    sub_agents = [Interviewer, TurnEvaluator],
+    max_iterations = MAX_INTERVIEW_TURNS
+)
+Termination: LoopAgent checks INTERVIEW_COMPLETE in state before each iteration. The flag is set by the Turn Evaluator's callback. max_iterations is the hard ceiling — safety net if the flag never fires.
+Each iteration of this loop = one full interview turn (one question, one answer, one silent evaluation).
+
+orchestration/pipeline.py
+Defines the root SequentialAgent — the full interview pipeline from start to finish:
+InterviewPipeline = SequentialAgent(
+    name = "interview_pipeline",
+    sub_agents = [Profiler, InterviewLoop, Coach]
+)
+This is the only agent the Runner in main.py knows about. Everything else is internal to this graph.
+
+main.py
+The CLI entry point. Thin by design. Responsibilities:
+
+Print a welcome banner
+Collect three inputs from the terminal: role, background, focus area
+Instantiate InMemorySessionService and create a session
+Seed session state with the three inputs
+Instantiate Runner with InterviewPipeline
+Fire runner.run() — from here, ADK drives everything
+When the runner returns, read COACHING_REPORT from final state and print it
+
+main.py has no orchestration logic.
+It collects input, starts the runner, and prints the output.
+That's it.
+
+How Session State Evolves
+────────────────────────────────────────────────────────
+  PHASE                     STATE KEYS PRESENT
+────────────────────────────────────────────────────────
+  Before run starts         candidate_role
+                            candidate_background
+                            focus_area
+                            current_turn = 0
+                            interview_complete = False
+                            conversation_history = []
+                            turn_scores = []
+
+  After Profiler            + session_strategy (JSON)
+
+  After Turn 1              + conversation_history[0]
+  (first loop iteration)    + turn_scores[0]
+                            + last_evaluator_signal
+                            + current_turn = 1
+
+  After Turn N              conversation_history grows
+                            turn_scores grows
+                            current_turn = N
+                            interview_complete = True  ← loop exits
+
+  After Coach               + coaching_report (Markdown)
+────────────────────────────────────────────────────────
+
+ADK Primitive Map
+Our Concept                 ADK Primitive
+─────────────────────────────────────────────────────
+Full pipeline               SequentialAgent
+Interview loop              LoopAgent
+Individual agents           LlmAgent
+User input capture          FunctionTool (cli_input)
+Shared memory               session.state (dict)
+Termination condition       after_agent_callback + state flag
+Gemini model                model="gemini-2.0-flash" on each LlmAgent
+
+What Deliberately Lives Outside ADK
+Two things are handled in plain Python, not in ADK primitives, because ADK doesn't need to own them:
+
+Input collection (main.py) — the initial three questions to the candidate before the session starts. These are just input() calls, not part of the agent graph.
+Report printing (main.py) — after the runner finishes, reading coaching_report from state and printing it to the terminal. No agent needed for this.
+
+
+Dependency Surface
+requirements.txt will need (roughly):
+
+google-adk
+google-generativeai
+python-dotenv        # for GOOGLE_API_KEY from .env
+That's a deliberately minimal dependency tree. No LangChain, no vector DB, no extra frameworks. The assignment rewards showing you can build something real without scaffolding bloat.

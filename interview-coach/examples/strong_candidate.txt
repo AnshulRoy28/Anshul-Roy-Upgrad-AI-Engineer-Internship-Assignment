@@ -1,0 +1,89 @@
+=== STRONG CANDIDATE EXAMPLE ===
+
+Role: Product Manager
+Background: 3 years at tech startup, led 2 product launches
+Focus: Behavioral
+
+--- TRANSCRIPT ---
+
+[Interviewer]: Tell me about a time when you had to make a difficult product decision with incomplete information.
+
+[Candidate]: At my previous company, we were deciding whether to build a new analytics dashboard feature. We had limited user research - only 15 customer interviews - and our engineering team was already stretched thin. 
+
+I used the RICE framework to prioritize. Reach was potentially high (80% of users), Impact was medium (nice-to-have, not critical), Confidence was low (40% due to limited data), and Effort was 3 engineer-months.
+
+I decided to run a quick prototype test with 5 power users over 2 weeks before committing. The prototype revealed that users actually wanted simpler exports, not a full dashboard. We pivoted, built the export feature in 2 weeks, and saw 60% adoption in the first month.
+
+[Interviewer]: That's a great example. How did you handle pushback from stakeholders who wanted the dashboard?
+
+[Candidate]: Our VP of Sales was initially disappointed because he'd promised the dashboard to a key client. I scheduled a 1-on-1 with him, showed him the prototype test results, and explained that the export feature would actually solve the client's underlying need faster. I also committed to revisiting the dashboard in Q3 if the export feature didn't meet expectations. He appreciated the data-driven approach and the commitment to follow up.
+
+[Interviewer]: Got it, thanks. Let's shift to prioritization. How do you decide what to build when you have 10 good ideas but can only ship 2?
+
+[Candidate]: I use a combination of frameworks. First, I align with company OKRs - if an idea doesn't ladder up to our quarterly objectives, it's out. Then I use RICE scoring for the remaining ideas, but I also factor in strategic bets. For example, we might score a feature as medium priority, but if it opens up a new market segment, I'll advocate for it as a strategic investment.
+
+I also involve the team. I run a prioritization workshop where engineering, design, and sales each get to champion one idea. This builds buy-in and often surfaces insights I missed.
+
+[Interviewer]: Can you give me a specific example of a time you had to say no to a feature request?
+
+[Candidate]: Yes. Our CEO wanted us to build a mobile app. It was a pet project of his. I ran the numbers: our web traffic was 95% desktop, mobile app development would take 6 months, and our core users were enterprise admins who worked from desktops.
+
+I presented this data in our quarterly planning meeting and proposed we invest in improving our web experience instead. The CEO wasn't thrilled, but he respected the data. We built a responsive web design instead, which took 6 weeks and improved mobile web usage by 40%.
+
+[Interviewer]: How do you measure success for your products?
+
+[Candidate]: I define success metrics before we build anything. For each feature, I identify a North Star metric and 2-3 supporting metrics. For example, for our onboarding redesign, the North Star was "% of users completing setup in first session." Supporting metrics were time-to-first-value and activation rate.
+
+I also distinguish between vanity metrics and actionable metrics. Page views are vanity. Engagement rate and retention are actionable. I track metrics weekly and run retrospectives monthly to see if we're moving the needle.
+
+[Interviewer]: Last question - tell me about a product that failed and what you learned.
+
+[Candidate]: We built a collaboration feature that let users comment on reports. We thought it would drive engagement. It flopped - only 5% adoption after 3 months.
+
+Post-mortem revealed we'd built a solution looking for a problem. Users were already collaborating in Slack and email. They didn't want another place to check.
+
+I learned to validate the problem before building the solution. Now I run "problem interviews" before "solution interviews." I ask users about their workflows and pain points, not about features they want. This shift has dramatically improved our hit rate on new features.
+
+[Interviewer]: We're coming to the end of our time. Thank you for sharing those examples.
+
+--- END TRANSCRIPT ---
+
+=== COACHING REPORT ===
+
+## Interview Summary
+Strong performance for a mid-level PM role with behavioral focus. Candidate demonstrated clear structure (STAR format), concrete examples with metrics, and self-awareness about failures. Overall impression: ready for PM role, possibly senior IC level.
+
+## Performance by Competency
+
+### Product Sense & Decision-Making
+Excellent. Used frameworks appropriately (RICE, OKRs) without being dogmatic. Showed ability to pivot based on data (dashboard → export feature). Validated assumptions before committing resources (prototype testing). Scores: Completeness 5, Depth 5, Structure 5, Role-fit 5, Specificity 5.
+
+### Stakeholder Management
+Strong. Handled VP pushback with empathy and data. Navigated CEO's pet project diplomatically. Demonstrated ability to build buy-in through workshops. Scores: Completeness 5, Depth 4, Structure 5, Role-fit 5, Specificity 5.
+
+### Metrics & Measurement
+Very strong. Distinguished between vanity and actionable metrics. Defined success criteria upfront. Tracked and iterated on metrics. Scores: Completeness 5, Depth 5, Structure 4, Role-fit 5, Specificity 5.
+
+### Learning from Failure
+Excellent self-awareness. Honest about failure (5% adoption). Extracted clear lesson (validate problem before solution). Changed behavior based on learning. Scores: Completeness 5, Depth 5, Structure 5, Role-fit 5, Specificity 5.
+
+## Strengths
+- **STAR format mastery**: Every answer followed Situation-Task-Action-Result structure naturally (all turns)
+- **Quantitative specificity**: Cited concrete numbers throughout (80% reach, 60% adoption, 95% desktop traffic, 5% feature adoption)
+- **Framework fluency**: Used RICE, OKRs, North Star metrics appropriately without sounding robotic
+- **Self-awareness**: Honest about failure and articulated clear learning (Turn 6)
+- **Stakeholder empathy**: Showed understanding of VP and CEO perspectives, not just data (Turns 2, 4)
+
+## Gaps
+- **No significant gaps identified**: Performance was consistently strong across all competencies
+- **Minor**: Could have elaborated slightly more on how you involve engineering in prioritization (Turn 3 mentioned design and sales but engineering was brief)
+
+## What to Practice
+1. **Stretch your scope**: Your examples are solid IC PM work. To reach senior level, practice examples that show cross-team influence or strategy-setting
+2. **Quantify stakeholder impact**: You mentioned "VP appreciated the approach" - practice quantifying stakeholder outcomes (e.g., "VP became our biggest advocate, brought us 3 new clients")
+3. **Failure depth**: Your failure example was good, but practice one where the stakes were higher or the learning was more painful - shows resilience
+4. **Technical depth**: Consider adding one example that shows you can engage with engineering on technical tradeoffs, not just prioritization
+5. **Vision**: Practice articulating a product vision or strategy, not just tactical execution
+
+## One Priority Before Your Next Interview
+You're already interview-ready for mid-level PM roles. Your one priority: **practice examples that demonstrate strategic thinking and cross-functional leadership**. Your current examples are excellent but tactical (feature decisions, prioritization). To reach senior PM level, prepare 1-2 stories where you influenced product strategy, aligned multiple teams around a vision, or made a bet that shaped the company's direction. This will differentiate you from other strong IC PMs.
