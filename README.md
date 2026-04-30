@@ -41,17 +41,23 @@ Windows: `start.bat`
 
 Then open http://localhost:8000
 
-### Deploy to Render
+### Deploy to Google Cloud Run
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
+**Quick Deploy:**
+```bash
+# Set your project
+gcloud config set project YOUR_PROJECT_ID
 
-**See [RENDER_DEPLOYMENT.md](RENDER_DEPLOYMENT.md) for detailed instructions.**
+# Deploy from GitHub
+gcloud run deploy ai-interview-coach \
+  --source https://github.com/AnshulRoy28/Anshul-Roy-Upgrad-AI-Engineer-Internship-Assignment \
+  --platform managed \
+  --region us-central1 \
+  --allow-unauthenticated \
+  --set-env-vars GOOGLE_API_KEY="your_google_api_key_here"
+```
 
-Quick steps:
-1. Push code to GitHub
-2. Connect GitHub to Render
-3. Add `GOOGLE_API_KEY` environment variable
-4. Deploy!
+**See [CLOUDRUN_DEPLOYMENT.md](CLOUDRUN_DEPLOYMENT.md) for detailed instructions.**
 
 ## 🎯 How It Works
 
@@ -211,42 +217,57 @@ See `frontend-api-spec.json` for complete API documentation.
 
 ## 🚀 Production Deployment
 
-### Render (Recommended)
+### Google Cloud Run (Recommended)
 
-See [RENDER_DEPLOYMENT.md](RENDER_DEPLOYMENT.md) for detailed guide.
+See [CLOUDRUN_DEPLOYMENT.md](CLOUDRUN_DEPLOYMENT.md) for detailed guide.
 
+**Quick Deploy:**
 ```bash
-# Deploy via GitHub
-git push origin main
-# Render auto-deploys on push
+# Deploy from GitHub
+gcloud run deploy ai-interview-coach \
+  --source https://github.com/AnshulRoy28/Anshul-Roy-Upgrad-AI-Engineer-Internship-Assignment \
+  --platform managed \
+  --region us-central1 \
+  --allow-unauthenticated \
+  --set-env-vars GOOGLE_API_KEY="your_key"
+```
+
+**Or build and deploy:**
+```bash
+# Build container
+gcloud builds submit --tag gcr.io/PROJECT_ID/ai-interview-coach
+
+# Deploy
+gcloud run deploy ai-interview-coach \
+  --image gcr.io/PROJECT_ID/ai-interview-coach \
+  --platform managed \
+  --region us-central1
 ```
 
 ### Docker
 
-```dockerfile
-FROM python:3.11-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
-EXPOSE 8000
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8000", "api_server:app"]
-```
-
 ```bash
+# Build
 docker build -t ai-interview-coach .
-docker run -p 8000:8000 -e GOOGLE_API_KEY=your_key ai-interview-coach
+
+# Run locally
+docker run -p 8080:8080 -e GOOGLE_API_KEY=your_key ai-interview-coach
+
+# Push to registry
+docker tag ai-interview-coach gcr.io/PROJECT_ID/ai-interview-coach
+docker push gcr.io/PROJECT_ID/ai-interview-coach
 ```
 
 ### Other Platforms
 
-Works on any Python hosting platform:
-- Heroku
-- Railway
-- Fly.io
-- AWS Elastic Beanstalk
-- Google Cloud Run
-- Azure App Service
+The Docker container works on any platform:
+- **Google Cloud Run** (Recommended)
+- **AWS App Runner**
+- **Azure Container Instances**
+- **Heroku Container Registry**
+- **Railway**
+- **Fly.io**
+- **Render**
 
 ## 💡 Tips for Best Results
 
@@ -290,7 +311,7 @@ cat .env
 
 ## 📚 Documentation
 
-- **[RENDER_DEPLOYMENT.md](RENDER_DEPLOYMENT.md)** - Deploy to Render
+- **[CLOUDRUN_DEPLOYMENT.md](CLOUDRUN_DEPLOYMENT.md)** - Deploy to Google Cloud Run ⭐
 - **[QUICKSTART.md](QUICKSTART.md)** - 5-minute setup guide
 - **[DEPLOYMENT.md](DEPLOYMENT.md)** - Production deployment
 - **[frontend-api-spec.json](frontend-api-spec.json)** - Complete API docs
@@ -339,7 +360,7 @@ MIT License - See LICENSE file for details
 
 - Built with [Google ADK](https://github.com/google/adk)
 - Powered by [Gemini API](https://ai.google.dev/)
-- Deployed on [Render](https://render.com/)
+- Deployed on [Google Cloud Run](https://cloud.google.com/run)
 
 ## 📧 Contact
 
