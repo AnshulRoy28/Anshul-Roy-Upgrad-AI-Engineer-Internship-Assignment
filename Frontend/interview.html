@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview AI — Practice Session</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="min-h-screen overflow-x-hidden selection:bg-white/10 font-sans bg-[#09090b] relative text-white"
+    style="font-family: 'Inter', sans-serif;">
+
+    <!-- Background Glow Effects -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden flex items-center justify-center">
+        <div
+            class="absolute top-0 left-1/2 -translate-x-1/2 w-px h-[60vh] bg-gradient-to-b via-zinc-500/5 to-transparent z-10 from-zinc-400/30">
+        </div>
+        <div
+            class="absolute top-[10%] left-1/2 -translate-x-1/2 w-48 h-56 blur-[100px] rounded-full z-10 bg-zinc-400/10">
+        </div>
+        <div
+            class="absolute -top-[50vh] w-[150vw] h-[100vh] rounded-[100%] border border-zinc-500/10 shadow-[0_0_120px_rgba(161,161,170,0.1)]">
+        </div>
+        <div
+            class="absolute top-[20vh] w-[120vw] h-[120vh] rounded-[100%] border shadow-[0_0_80px_rgba(161,161,170,0.05)] border-zinc-600/5">
+        </div>
+        <div class="absolute top-[30%] left-[15%] w-64 h-64 bg-zinc-500/5 blur-[80px] rounded-full"></div>
+        <div class="absolute bottom-[20%] right-[20%] w-80 h-80 blur-[100px] rounded-full bg-zinc-400/5"></div>
+    </div>
+
+    <!-- Top Bar -->
+    <header class="fixed flex md:px-12 z-50 pointer-events-auto pt-6 pr-6 pb-6 pl-6 top-0 right-0 left-0 items-center justify-between bg-[#09090b]/80 backdrop-blur-md border-b border-white/5">
+        <a href="index.html"
+            class="flex items-center gap-2.5 text-xl tracking-tight font-medium hover:opacity-80 transition-opacity font-geist text-white">
+            <iconify-icon icon="solar:chat-round-dots-bold" class="w-5 h-5 flex items-center justify-center text-white"
+                style="stroke-width: 1.5;"></iconify-icon>
+            Interview AI
+        </a>
+
+        <div class="flex items-center gap-4">
+            <div id="connectionStatus" class="text-xs text-zinc-500">
+                <span class="text-zinc-400">● Checking...</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <label for="apiKeyInput" class="text-sm text-zinc-400">API Key:</label>
+                <input type="password" id="apiKeyInput" placeholder="Enter Google API Key"
+                    class="input-field w-48 py-1.5 px-3 text-xs">
+            </div>
+            <div class="flex items-center gap-2">
+                <label for="baseUrlInput" class="text-sm text-zinc-400">API URL:</label>
+                <input type="text" id="baseUrlInput" placeholder="http://localhost:8000/api/v1"
+                    class="input-field w-64 py-1.5 px-3 text-xs">
+            </div>
+        </div>
+    </header>
+
+    <main class="z-20 container md:px-12 pointer-events-auto mr-auto ml-auto pt-32 pr-6 pb-10 pl-6 relative">
+
+        <!-- State 1: Setup View -->
+        <div id="setup-view" class="page-section active max-w-4xl mx-auto">
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-medium tracking-tight mb-3 font-geist text-white">🎯 Setup Your Interview</h1>
+            </div>
+
+            <!-- Info Box -->
+            <div class="panel p-4 mb-8 bg-blue-500/10 border-blue-500/20">
+                <p class="text-sm text-zinc-300">
+                    <strong>How it works:</strong> 1. Paste resume 2. Paste job description 3. Configure settings 4. Start interview
+                </p>
+            </div>
+
+            <!-- Resume Panel -->
+            <div class="panel p-6 mb-6">
+                <label class="block text-lg font-medium text-white mb-3 font-geist">Your Resume (LaTeX Format)</label>
+                <textarea id="resumeInput" class="input-field" rows="12"
+                    placeholder="\documentclass{article}&#10;\begin{document}&#10;\name{John Doe}&#10;..."></textarea>
+                
+                <button id="resumePreviewBtn" class="mt-3 text-sm text-zinc-400 hover:text-zinc-200 flex items-center gap-2">
+                    <iconify-icon icon="solar:alt-arrow-down-linear" class="w-4 h-4"></iconify-icon>
+                    Preview Parsed Resume
+                </button>
+                <div id="resumePreview" class="mt-3 p-4 bg-[#131316] rounded-xl border border-white/5 hidden">
+                    <p class="text-xs text-zinc-500 mb-2">Parsed data will appear here after you start the interview</p>
+                </div>
+            </div>
+
+            <!-- Job Panel -->
+            <div class="panel p-6 mb-6">
+                <label class="block text-lg font-medium text-white mb-3 font-geist">Job Description (Plain Text)</label>
+                <textarea id="jobInput" class="input-field" rows="12"
+                    placeholder="Senior Software Engineer&#10;&#10;Requirements:&#10;- 5+ years experience..."></textarea>
+                
+                <button id="jobPreviewBtn" class="mt-3 text-sm text-zinc-400 hover:text-zinc-200 flex items-center gap-2">
+                    <iconify-icon icon="solar:alt-arrow-down-linear" class="w-4 h-4"></iconify-icon>
+                    Preview Parsed Job Description
+                </button>
+                <div id="jobPreview" class="mt-3 p-4 bg-[#131316] rounded-xl border border-white/5 hidden">
+                    <p class="text-xs text-zinc-500 mb-2">Parsed data will appear here after you start the interview</p>
+                </div>
+            </div>
+
+            <!-- Settings Panel -->
+            <div class="panel p-6 mb-8">
+                <h3 class="text-lg font-medium text-white mb-4 font-geist">Interview Settings</h3>
+                
+                <div class="mb-4">
+                    <label class="block text-sm text-zinc-400 mb-2">Focus Area</label>
+                    <select id="focusArea" class="input-field">
+                        <option value="behavioral">Behavioral</option>
+                        <option value="technical">Technical</option>
+                        <option value="case">Case Study</option>
+                        <option value="mixed">Mixed</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center gap-3 mb-3">
+                    <input type="checkbox" id="adaptiveToggle" checked class="w-4 h-4">
+                    <label for="adaptiveToggle" class="text-sm text-zinc-300">Enable Adaptive Strategy</label>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <input type="checkbox" id="predictionToggle" checked class="w-4 h-4">
+                    <label for="predictionToggle" class="text-sm text-zinc-300">Enable Outcome Prediction</label>
+                </div>
+            </div>
+
+            <!-- Start Button -->
+            <div class="text-center">
+                <button id="startBtn" data-label="◆ Start Interview" class="btn-primary" disabled>
+                    ◆ Start Interview
+                </button>
+            </div>
+        </div>
+
+        <!-- State 2: Interview View -->
+        <div id="interview-view" class="page-section max-w-4xl mx-auto">
+            <!-- Progress -->
+            <div class="mb-6">
+                <div class="flex items-center justify-between mb-2">
+                    <span id="turnLabel" class="text-sm text-zinc-400">Turn 1 of 8</span>
+                </div>
+                <div class="progress-track">
+                    <div id="progressBar" class="progress-fill" style="width: 12.5%"></div>
+                </div>
+            </div>
+
+            <!-- Conversation History -->
+            <div id="chatHistory" class="chat-scroll mb-6 max-h-[400px] overflow-y-auto space-y-3">
+                <!-- Turns will be appended here -->
+            </div>
+
+            <!-- Current Question -->
+            <div id="questionBox" class="glass-card p-6 mb-6">
+                <div class="flex items-center gap-2 mb-3">
+                    <iconify-icon icon="solar:chat-round-dots-bold" class="text-zinc-400"></iconify-icon>
+                    <span id="questionMeta" class="text-sm text-zinc-400">Question 1 • Behavioral</span>
+                </div>
+                <p id="questionText" class="text-lg text-zinc-200">Loading question...</p>
+            </div>
+
+            <!-- Answer Input -->
+            <div class="panel p-6 mb-6">
+                <label class="block text-sm text-zinc-400 mb-2">Your Answer</label>
+                <textarea id="answerInput" class="input-field" rows="6"
+                    placeholder="Type your answer here... Use STAR format (Situation, Task, Action, Result)"></textarea>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex items-center justify-between">
+                <button id="submitBtn" data-label="◆ Submit Answer" class="btn-primary">
+                    ◆ Submit Answer
+                </button>
+                <button id="endBtn" class="btn-secondary">
+                    End Early
+                </button>
+            </div>
+
+            <!-- Prediction Alert -->
+            <div id="predictionAlert" class="mt-6 panel p-4 hidden">
+                <div class="flex items-center gap-3">
+                    <iconify-icon icon="solar:magic-stick-bold" class="text-2xl text-purple-400"></iconify-icon>
+                    <div>
+                        <p class="text-sm font-medium text-white">Outcome Prediction</p>
+                        <p id="predictionText" class="text-xs text-zinc-400">Analyzing your performance...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- State 3: Results View -->
+        <div id="results-view" class="page-section max-w-5xl mx-auto">
+            <!-- Success Banner -->
+            <div id="resultsBanner" class="panel p-6 mb-8 bg-green-500/10 border-green-500/20 text-center">
+                <iconify-icon icon="solar:check-circle-bold" class="text-4xl text-green-400 mb-2"></iconify-icon>
+                <h2 class="text-2xl font-medium text-white font-geist">Great job! Your interview is complete.</h2>
+            </div>
+
+            <!-- Benchmark Card -->
+            <div id="benchmarkCard" class="glass-card p-6 mb-8">
+                <div class="grid grid-cols-2 gap-6 text-center">
+                    <div>
+                        <p class="text-sm text-zinc-400 mb-1">Readiness Level</p>
+                        <p id="readinessLevel" class="text-2xl font-medium text-white font-geist">READY</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-zinc-400 mb-1">Percentile</p>
+                        <p id="percentileRank" class="text-2xl font-medium text-white font-geist">Top 30%</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coaching Report -->
+            <div class="panel p-8 mb-8">
+                <h3 class="text-2xl font-medium text-white mb-6 font-geist">Coaching Report</h3>
+                <div id="reportContent" class="prose prose-invert max-w-none text-zinc-300">
+                    <p>Loading report...</p>
+                </div>
+            </div>
+
+            <!-- Insights Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- Strengths -->
+                <div class="panel p-6">
+                    <h4 class="text-lg font-medium text-white mb-4 font-geist flex items-center gap-2">
+                        <iconify-icon icon="solar:check-circle-bold" class="text-green-400"></iconify-icon>
+                        Strengths
+                    </h4>
+                    <ul id="strengthsList" class="space-y-2 text-sm text-zinc-400">
+                        <li>Loading...</li>
+                    </ul>
+                </div>
+
+                <!-- Skill Gaps -->
+                <div class="panel p-6">
+                    <h4 class="text-lg font-medium text-white mb-4 font-geist flex items-center gap-2">
+                        <iconify-icon icon="solar:danger-triangle-bold" class="text-yellow-400"></iconify-icon>
+                        Skill Gaps
+                    </h4>
+                    <ul id="skillGapsList" class="space-y-3 text-sm">
+                        <li>Loading...</li>
+                    </ul>
+                </div>
+
+                <!-- Answer Patterns -->
+                <div class="panel p-6">
+                    <h4 class="text-lg font-medium text-white mb-4 font-geist">Answer Patterns</h4>
+                    <div id="patternCard" class="text-sm text-zinc-400 space-y-2">
+                        <p>Loading...</p>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="panel p-6">
+                    <h4 class="text-lg font-medium text-white mb-4 font-geist">Session Stats</h4>
+                    <div id="statsCard" class="text-sm text-zinc-400 space-y-2">
+                        <p>Loading...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Restart Button -->
+            <div class="text-center">
+                <button id="restartBtn" class="btn-primary">
+                    ◆ Start New Interview
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="app.js"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

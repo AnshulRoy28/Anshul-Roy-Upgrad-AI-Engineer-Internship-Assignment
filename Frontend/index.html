@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview AI — Ace Your Next Interview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="min-h-screen overflow-x-hidden selection:bg-white/10 font-sans bg-[#09090b] relative text-white"
+    style="font-family: 'Inter', sans-serif;">
+
+    <!-- Background Glow Effects -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden flex items-center justify-center">
+        <div
+            class="absolute top-0 left-1/2 -translate-x-1/2 w-px h-[60vh] bg-gradient-to-b via-zinc-500/5 to-transparent z-10 from-zinc-400/30">
+        </div>
+        <div
+            class="absolute top-[10%] left-1/2 -translate-x-1/2 w-48 h-56 blur-[100px] rounded-full z-10 bg-zinc-400/10">
+        </div>
+        <div
+            class="absolute -top-[50vh] w-[150vw] h-[100vh] rounded-[100%] border border-zinc-500/10 shadow-[0_0_120px_rgba(161,161,170,0.1)]">
+        </div>
+        <div
+            class="absolute top-[20vh] w-[120vw] h-[120vh] rounded-[100%] border shadow-[0_0_80px_rgba(161,161,170,0.05)] border-zinc-600/5">
+        </div>
+        <div class="absolute top-[30%] left-[15%] w-64 h-64 bg-zinc-500/5 blur-[80px] rounded-full"></div>
+        <div class="absolute bottom-[20%] right-[20%] w-80 h-80 blur-[100px] rounded-full bg-zinc-400/5"></div>
+    </div>
+
+    <!-- Navigation -->
+    <header
+        class="fixed flex md:px-12 z-50 pointer-events-auto pt-6 pr-6 pb-6 pl-6 top-0 right-0 left-0 items-center justify-between">
+        <a href="index.html"
+            class="flex items-center gap-2.5 text-xl tracking-tight font-medium hover:opacity-80 transition-opacity font-geist text-white">
+            <iconify-icon icon="solar:chat-round-dots-bold" class="w-5 h-5 flex items-center justify-center text-white"
+                style="stroke-width: 1.5;"></iconify-icon>
+            Interview AI
+        </a>
+
+        <nav class="hidden md:flex items-center gap-10 text-base font-normal text-zinc-400">
+            <a href="#features" class="flex items-center gap-1.5 transition-colors group hover:text-zinc-200">
+                Features
+            </a>
+            <a href="#how-it-works" class="flex items-center gap-1.5 transition-colors group hover:text-zinc-200">
+                How It Works
+            </a>
+        </nav>
+
+        <div class="hidden md:flex items-center gap-6">
+            <!-- Animated Hover CTA Nav -->
+            <a href="interview.html"
+                class="group relative inline-flex min-w-[120px] cursor-pointer transition-all duration-[1000ms] ease-[cubic-bezier(0.15,0.83,0.66,1)] hover:-translate-y-[2px] shadow-[0_2.8px_2.2px_rgba(0,0,0,0.3),_0_6.7px_5.3px_rgba(0,0,0,0.35),_0_12.5px_10px_rgba(0,0,0,0.4)] overflow-hidden font-normal tracking-tight bg-[#09090b]/80 backdrop-blur-md border rounded-full px-5 py-2.5 items-center justify-center text-sm hover:text-white text-zinc-300 border-zinc-700/80">
+                <!-- Original text (slides down on hover) -->
+                <span
+                    class="relative z-10 flex items-center gap-2 rounded-full transition-all duration-500 ease-out group-hover:transform group-hover:translate-y-8 group-hover:opacity-0 group-hover:blur-md">
+                    Start Practicing
+                    <iconify-icon icon="solar:arrow-right-linear" class="w-4 h-4 flex items-center justify-center"
+                        style="stroke-width: 1.5;"></iconify-icon>
+                </span>
+
+                <!-- Clone text (slides in from top on hover) -->
+                <span
+                    class="absolute inset-0 z-10 flex items-center justify-center gap-2 transition-all duration-300 ease-in-out transform -translate-y-8 group-hover:translate-y-0 group-hover:opacity-100 group-hover:blur-none opacity-0 rounded-full blur-md">
+                    Start Practicing
+                    <iconify-icon icon="solar:arrow-right-linear" class="w-4 h-4 flex items-center justify-center"
+                        style="stroke-width: 1.5;"></iconify-icon>
+                </span>
+
+                <!-- bottom light gradient line on hover -->
+                <span aria-hidden="true"
+                    class="absolute bottom-0 left-1/2 h-[1px] w-[70%] -translate-x-1/2 transition-all duration-[1000ms] ease-[cubic-bezier(0.15,0.83,0.66,1)] opacity-0 group-hover:opacity-80 bg-gradient-to-r from-transparent to-transparent rounded-full blur-[2px] via-neutral-200"></span>
+
+                <!-- bottom light gradient on hover -->
+                <span aria-hidden="true"
+                    class="absolute bottom-0 left-0 right-0 h-[100%] opacity-0 group-hover:opacity-60 transition-all duration-[1000ms] ease-[cubic-bezier(0.15,0.83,0.66,1)] pointer-events-none bg-gradient-to-t to-transparent rounded-full from-white/20 via-white/10"></span>
+            </a>
+        </div>
+    </header>
+
+    <main
+        class="z-20 container md:px-12 flex flex-col md:pb-16 pointer-events-none mr-auto ml-auto pt-32 pr-6 pb-10 pl-6 relative justify-center">
+
+        <div
+            class="grid grid-cols-1 lg:grid-cols-2 lg:gap-12 pointer-events-auto min-h-[70vh] gap-x-16 gap-y-16 items-center">
+
+            <!-- Left Side -->
+            <div class="flex flex-col gap-10 lg:pr-8 text-left gap-x-10 gap-y-10">
+                <h1
+                    class="sm:text-6xl md:text-7xl leading-[1.1] [animation:animationIn_0.8s_ease-out_0.1s_both] animate-on-scroll animate text-5xl font-medium tracking-tight font-geist text-white/95">
+                    Ace Your Next<br>
+                    Interview With<br>
+                    <span class="text-zinc-500">AI Coaching</span>
+                </h1>
+
+                <div
+                    class="flex flex-wrap items-center gap-4 [animation:animationIn_0.8s_ease-out_0.2s_both] animate-on-scroll animate">
+                    <!-- Animated Hover CTA Hero -->
+                    <a href="interview.html"
+                        class="group relative inline-flex min-w-[120px] cursor-pointer transition-all duration-[1000ms] ease-[cubic-bezier(0.15,0.83,0.66,1)] hover:-translate-y-[3px] shadow-[0_2.8px_2.2px_rgba(0,0,0,0.3),_0_6.7px_5.3px_rgba(0,0,0,0.35),_0_12.5px_10px_rgba(0,0,0,0.4)] overflow-hidden font-normal tracking-tight border rounded-full px-8 py-3.5 items-center justify-center text-lg hover:text-white text-zinc-300 bg-zinc-900 border-zinc-700/80">
+                        <!-- Original text (slides down on hover) -->
+                        <span
+                            class="relative z-10 flex items-center gap-2 rounded-full transition-all duration-500 ease-out group-hover:transform group-hover:translate-y-8 group-hover:opacity-0 group-hover:blur-md">
+                            Start Practicing
+                            <iconify-icon icon="solar:arrow-right-linear"
+                                class="w-5 h-5 flex items-center justify-center"
+                                style="stroke-width: 1.5;"></iconify-icon>
+                        </span>
+
+                        <!-- Clone text (slides in from top on hover) -->
+                        <span
+                            class="absolute inset-0 z-10 flex items-center justify-center gap-2 transition-all duration-300 ease-in-out transform -translate-y-8 group-hover:translate-y-0 group-hover:opacity-100 group-hover:blur-none font-medium opacity-0 rounded-full blur-md">
+                            Start Practicing
+                            <iconify-icon icon="solar:arrow-right-linear"
+                                class="flex items-center justify-center w-5 h-5"
+                                style="stroke-width: 1.5;"></iconify-icon>
+                        </span>
+
+                        <!-- bottom light gradient line on hover -->
+                        <span aria-hidden="true"
+                            class="absolute bottom-0 left-1/2 h-[1px] w-[70%] -translate-x-1/2 transition-all duration-[1000ms] ease-[cubic-bezier(0.15,0.83,0.66,1)] opacity-0 group-hover:opacity-80 bg-gradient-to-r from-transparent to-transparent rounded-full blur-[2px] via-neutral-200"></span>
+
+                        <!-- bottom light gradient on hover -->
+                        <span aria-hidden="true"
+                            class="absolute bottom-0 left-0 right-0 h-[100%] opacity-0 group-hover:opacity-60 transition-all duration-[1000ms] ease-[cubic-bezier(0.15,0.83,0.66,1)] pointer-events-none bg-gradient-to-t to-transparent rounded-full from-white/20 via-white/10"></span>
+                    </a>
+
+                    <a href="#how-it-works"
+                        class="px-8 py-3.5 rounded-full border bg-transparent text-lg font-normal transition-colors backdrop-blur-sm border-zinc-800 text-zinc-300 hover:bg-zinc-800/50 hover:text-white">
+                        Learn More
+                    </a>
+                </div>
+
+                <!-- Features List -->
+                <div class="flex flex-col gap-5 pt-4 [animation:animationIn_0.8s_ease-out_0.3s_both] animate-on-scroll">
+                    <div class="flex items-start gap-4 text-lg font-normal group text-zinc-400">
+                        <iconify-icon icon="solar:check-circle-linear"
+                            class="w-6 h-6 flex items-center justify-center text-zinc-500 mt-0.5 group-hover:text-zinc-300 transition-colors flex-shrink-0"
+                            style="stroke-width: 1.5;"></iconify-icon>
+                        <span><span class="font-medium text-zinc-200">Adaptive AI:</span> adjusts to your skill level</span>
+                    </div>
+                    <div class="flex items-start gap-4 text-lg font-normal group text-zinc-400">
+                        <iconify-icon icon="solar:check-circle-linear"
+                            class="w-6 h-6 flex items-center justify-center text-zinc-500 mt-0.5 group-hover:text-zinc-300 transition-colors flex-shrink-0"
+                            style="stroke-width: 1.5;"></iconify-icon>
+                        <span class=""><span class="font-medium text-zinc-200">Real-time Scoring:</span> instant 5-dimension feedback</span>
+                    </div>
+                    <div class="flex items-start gap-4 text-lg font-normal group text-zinc-400">
+                        <iconify-icon icon="solar:check-circle-linear"
+                            class="w-6 h-6 flex items-center justify-center text-zinc-500 mt-0.5 group-hover:text-zinc-300 transition-colors flex-shrink-0"
+                            style="stroke-width: 1.5;"></iconify-icon>
+                        <span class=""><span class="font-medium text-zinc-200">Personalized Reports:</span> actionable practice plans</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Floating Image Cluster -->
+            <div
+                class="lg:h-[650px] hidden md:block [animation:animationIn_0.8s_ease-out_0.4s_both] animate-on-scroll animate w-full h-[500px] z-50 pointer-events-auto relative">
+                <div
+                    class="glass-card absolute top-[5%] left-[5%] w-40 lg:w-48 aspect-square rotate-[-4deg] p-2 md:p-3 z-[61] transition-all duration-500 ease-out hover:scale-105 hover:z-[100]">
+                    <div
+                        class="relative w-full h-full rounded-xl overflow-hidden shadow-[0_0_10px_rgba(0,0,0,0.5)] bg-zinc-900">
+                        <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/5b2b94ae-4a0b-458d-b838-58b0fb5fadfd_800w.webp"
+                            alt="" class="absolute inset-0 w-full h-full object-cover opacity-95">
+                        <div
+                            class="bg-gradient-to-tr to-transparent absolute top-0 right-0 bottom-0 left-0 from-black/40">
+                        </div>
+                    </div>
+                    <div class="glass-highlight"></div>
+                </div>
+                <div
+                    class="glass-card absolute top-[15%] right-[5%] w-48 lg:w-56 aspect-[4/3] rotate-[3deg] p-2 md:p-3 z-[62] transition-all duration-500 ease-out hover:scale-105 hover:z-[100]">
+                    <div
+                        class="relative w-full h-full rounded-xl overflow-hidden shadow-[0_0_10px_rgba(0,0,0,0.5)] bg-zinc-900">
+                        <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/98ceb9e8-e614-438f-b0b6-6ea9a4cd962a_800w.jpg"
+                            alt="" class="absolute inset-0 w-full h-full object-cover opacity-95">
+                        <div class="absolute inset-0 bg-gradient-to-tr to-transparent from-black/40"></div>
+                    </div>
+                    <div class="glass-highlight"></div>
+                </div>
+                <div
+                    class="glass-card lg:w-44 aspect-[3/4] md:p-3 w-36 z-[63] pt-2 pr-2 pb-2 pl-2 absolute top-[40%] left-[0%] rotate-[-2deg] transition-all duration-500 ease-out hover:scale-105 hover:z-[100]">
+                    <div
+                        class="relative w-full h-full rounded-xl overflow-hidden shadow-[0_0_10px_rgba(0,0,0,0.5)] bg-zinc-900">
+                        <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/cce9b24e-35c2-4401-966f-6862ca3cbe67_320w.webp"
+                            alt="" class="absolute inset-0 w-full h-full object-cover opacity-95">
+                        <div class="absolute inset-0 bg-gradient-to-tr to-transparent from-black/40"></div>
+                    </div>
+                    <div class="glass-highlight"></div>
+                </div>
+                <div
+                    class="glass-card absolute top-[35%] right-[15%] w-52 lg:w-64 aspect-square rotate-[2deg] p-2 md:p-3 z-[64] transition-all duration-500 ease-out hover:scale-105 hover:z-[100]">
+                    <div
+                        class="relative w-full h-full rounded-xl overflow-hidden shadow-[0_0_10px_rgba(0,0,0,0.5)] bg-zinc-900">
+                        <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/84c1c812-11be-4bbf-980f-9c90b7a0d779_800w.webp"
+                            alt="" class="absolute inset-0 w-full h-full object-cover opacity-95">
+                        <div class="absolute inset-0 bg-gradient-to-tr to-transparent from-black/40"></div>
+                    </div>
+                    <div class="glass-highlight"></div>
+                </div>
+                <div
+                    class="glass-card absolute bottom-[5%] left-[20%] w-44 lg:w-52 aspect-square rotate-[4deg] p-2 md:p-3 z-[62] transition-all duration-500 ease-out hover:scale-105 hover:z-[100]">
+                    <div
+                        class="relative w-full h-full rounded-xl overflow-hidden shadow-[0_0_10px_rgba(0,0,0,0.5)] bg-zinc-900">
+                        <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/7f606005-ba8e-4906-8403-5200e9723d9f_800w.webp"
+                            alt="" class="absolute inset-0 w-full h-full object-cover opacity-95">
+                        <div class="absolute inset-0 bg-gradient-to-tr to-transparent from-black/40"></div>
+                    </div>
+                    <div class="glass-highlight"></div>
+                </div>
+                <div
+                    class="glass-card absolute bottom-[0%] right-[10%] w-36 lg:w-44 aspect-[4/3] rotate-[-3deg] p-2 md:p-3 z-[61] transition-all duration-500 ease-out hover:scale-105 hover:z-[100]">
+                    <div
+                        class="relative w-full h-full rounded-xl overflow-hidden shadow-[0_0_10px_rgba(0,0,0,0.5)] bg-zinc-900">
+                        <img src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/6d1c6740-1f50-4f43-bbb0-8bfb2f9620bd_320w.webp"
+                            alt="" class="absolute inset-0 w-full h-full object-cover opacity-95">
+                        <div class="absolute inset-0 bg-gradient-to-tr to-transparent from-black/40"></div>
+                    </div>
+                    <div class="glass-highlight"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="z-20 container md:px-12 pointer-events-auto mr-auto ml-auto pt-16 pr-6 pb-16 pl-6 relative">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-5xl font-medium tracking-tight mb-4 font-geist text-white">How It Works</h2>
+            <p class="text-lg text-zinc-400">Three simple steps to interview mastery</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Step 1 -->
+            <div class="panel p-8 text-center [animation:animationIn_0.8s_ease-out_0.1s_both] animate-on-scroll">
+                <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 
+                     flex items-center justify-center mx-auto mb-6">
+                    <iconify-icon icon="solar:document-text-linear" class="w-8 h-8 text-zinc-300"></iconify-icon>
+                </div>
+                <h3 class="text-xl font-medium text-white mb-2 font-geist">1. Upload</h3>
+                <p class="text-zinc-400">Paste your resume (LaTeX) and the job description you're targeting</p>
+            </div>
+            
+            <!-- Step 2 -->
+            <div class="panel p-8 text-center [animation:animationIn_0.8s_ease-out_0.2s_both] animate-on-scroll">
+                <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 
+                     flex items-center justify-center mx-auto mb-6">
+                    <iconify-icon icon="solar:chat-round-dots-linear" class="w-8 h-8 text-zinc-300"></iconify-icon>
+                </div>
+                <h3 class="text-xl font-medium text-white mb-2 font-geist">2. Practice</h3>
+                <p class="text-zinc-400">Answer AI-generated questions tailored to your background and the role</p>
+            </div>
+            
+            <!-- Step 3 -->
+            <div class="panel p-8 text-center [animation:animationIn_0.8s_ease-out_0.3s_both] animate-on-scroll">
+                <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 
+                     flex items-center justify-center mx-auto mb-6">
+                    <iconify-icon icon="solar:chart-2-linear" class="w-8 h-8 text-zinc-300"></iconify-icon>
+                </div>
+                <h3 class="text-xl font-medium text-white mb-2 font-geist">3. Improve</h3>
+                <p class="text-zinc-400">Get a personalized coaching report with practice plans and skill gap analysis</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Footer -->
+    <section class="z-20 container md:px-12 pointer-events-auto mr-auto ml-auto text-center py-32 pr-6 pl-6 relative">
+        <h2 class="text-3xl md:text-5xl font-medium tracking-tight mb-4 font-geist text-white">
+            Ready to ace your interview?
+        </h2>
+        <p class="text-lg text-zinc-400 mb-8 max-w-2xl mx-auto">
+            Free to use. Powered by Google Gemini. Start practicing now.
+        </p>
+        <a href="interview.html"
+            class="group relative inline-flex min-w-[120px] cursor-pointer transition-all duration-[1000ms] ease-[cubic-bezier(0.15,0.83,0.66,1)] hover:-translate-y-[3px] shadow-[0_2.8px_2.2px_rgba(0,0,0,0.3),_0_6.7px_5.3px_rgba(0,0,0,0.35),_0_12.5px_10px_rgba(0,0,0,0.4)] overflow-hidden font-normal tracking-tight border rounded-full px-8 py-3.5 items-center justify-center text-lg hover:text-white text-zinc-300 bg-zinc-900 border-zinc-700/80">
+            <span
+                class="relative z-10 flex items-center gap-2 rounded-full transition-all duration-500 ease-out group-hover:transform group-hover:translate-y-8 group-hover:opacity-0 group-hover:blur-md">
+                Start Practicing
+                <iconify-icon icon="solar:arrow-right-linear" class="w-5 h-5 flex items-center justify-center"
+                    style="stroke-width: 1.5;"></iconify-icon>
+            </span>
+            <span
+                class="absolute inset-0 z-10 flex items-center justify-center gap-2 transition-all duration-300 ease-in-out transform -translate-y-8 group-hover:translate-y-0 group-hover:opacity-100 group-hover:blur-none font-medium opacity-0 rounded-full blur-md">
+                Start Practicing
+                <iconify-icon icon="solar:arrow-right-linear" class="flex items-center justify-center w-5 h-5"
+                    style="stroke-width: 1.5;"></iconify-icon>
+            </span>
+            <span aria-hidden="true"
+                class="absolute bottom-0 left-1/2 h-[1px] w-[70%] -translate-x-1/2 transition-all duration-[1000ms] ease-[cubic-bezier(0.15,0.83,0.66,1)] opacity-0 group-hover:opacity-80 bg-gradient-to-r from-transparent to-transparent rounded-full blur-[2px] via-neutral-200"></span>
+            <span aria-hidden="true"
+                class="absolute bottom-0 left-0 right-0 h-[100%] opacity-0 group-hover:opacity-60 transition-all duration-[1000ms] ease-[cubic-bezier(0.15,0.83,0.66,1)] pointer-events-none bg-gradient-to-t to-transparent rounded-full from-white/20 via-white/10"></span>
+        </a>
+    </section>
+
+    <script>
+        // Initialize scroll animations
+        (function () {
+            const once = true;
+            if (!window.__inViewIO) {
+                window.__inViewIO = new IntersectionObserver((entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add("animate");
+                            if (once) window.__inViewIO.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.2, rootMargin: "0px 0px -10% 0px" });
+            }
+            document.querySelectorAll(".animate-on-scroll").forEach((el) => {
+                window.__inViewIO.observe(el);
+            });
+            // Initialize Lucide icons
+            lucide.createIcons();
+        })();
+    </script>
+</body>
+
+</html>

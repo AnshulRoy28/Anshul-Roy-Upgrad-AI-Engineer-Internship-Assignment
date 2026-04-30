@@ -1,0 +1,75 @@
+Senior Software Engineer - Backend
+
+Company: CloudTech Solutions
+
+Location: San Francisco, CA (Hybrid)
+
+About Us:
+CloudTech Solutions is a fast-growing SaaS company building next-generation cloud infrastructure tools. We serve 10,000+ enterprise customers and process billions of API requests daily.
+
+About the Role:
+We're looking for a Senior Software Engineer to join our Platform Engineering team. You'll work on building scalable, reliable backend systems that power our core product offerings.
+
+Requirements:
+- 5+ years of professional software development experience
+- Strong proficiency in Python, Java, or Go
+- Deep understanding of distributed systems and microservices architecture
+- Experience with cloud platforms (AWS, GCP, or Azure)
+- Solid knowledge of database design and optimization (SQL and NoSQL)
+- Experience with containerization (Docker) and orchestration (Kubernetes)
+- Strong problem-solving skills and attention to detail
+- Excellent communication and collaboration skills
+- Bachelor's degree in Computer Science or equivalent experience
+
+Responsibilities:
+- Design, develop, and maintain scalable backend services and APIs
+- Lead technical discussions and make architectural decisions
+- Optimize system performance, reliability, and scalability
+- Implement monitoring, logging, and alerting solutions
+- Conduct code reviews and mentor junior engineers
+- Collaborate with product managers, designers, and other engineers
+- Participate in on-call rotation for production support
+- Write comprehensive technical documentation
+- Drive best practices for testing, deployment, and operations
+
+Preferred Qualifications:
+- Experience with high-traffic systems (1M+ requests per minute)
+- Knowledge of message queues (Kafka, RabbitMQ, SQS)
+- Experience with caching strategies (Redis, Memcached)
+- Familiarity with CI/CD pipelines and infrastructure as code
+- Contributions to open-source projects
+- Experience with observability tools (Datadog, Grafana, Prometheus)
+- Understanding of security best practices
+- Experience in a fast-paced startup environment
+
+Technical Stack:
+- Languages: Python, Go, Java
+- Frameworks: Django, Flask, Spring Boot
+- Cloud: AWS (Lambda, ECS, RDS, S3, CloudWatch)
+- Databases: PostgreSQL, MongoDB, Redis
+- Infrastructure: Docker, Kubernetes, Terraform
+- CI/CD: GitHub Actions, Jenkins
+- Monitoring: Datadog, Grafana, PagerDuty
+
+What We Offer:
+- Competitive salary ($180K - $240K) + equity
+- Comprehensive health, dental, and vision insurance
+- 401(k) with company match
+- Flexible PTO policy
+- Remote work options
+- Professional development budget
+- Latest MacBook Pro and equipment
+- Collaborative and inclusive culture
+
+Interview Process:
+1. Phone screen with recruiter (30 min)
+2. Technical phone interview (60 min)
+3. Virtual onsite (4 hours):
+   - System design interview
+   - Coding interview
+   - Behavioral interview
+   - Team fit interview
+4. Final conversation with hiring manager
+
+Equal Opportunity Employer:
+CloudTech Solutions is committed to creating a diverse and inclusive workplace. We welcome applications from all qualified candidates regardless of race, color, religion, sex, sexual orientation, gender identity, national origin, disability, or veteran status.

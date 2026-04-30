@@ -1,0 +1,1046 @@
+{
+    "apiSpecification": {
+        "version": "1.0.0",
+        "title": "AI Mock Interview Coach - Frontend API Specification",
+        "description": "Complete API specification for building a frontend UI to replace Streamlit",
+        "baseUrl": "/api/v1",
+        "authentication": {
+            "type": "API_KEY",
+            "description": "Google API key required for Gemini API access",
+            "header": "X-API-Key",
+            "envVariable": "GOOGLE_API_KEY"
+        }
+    },
+    "endpoints": [
+        {
+            "id": "parse_resume",
+            "path": "/parse/resume",
+            "method": "POST",
+            "description": "Parse LaTeX resume into structured data",
+            "requestBody": {
+                "type": "application/json",
+                "schema": {
+                    "latex_content": {
+                        "type": "string",
+                        "required": true,
+                        "description": "Resume in LaTeX format",
+                        "example": "\\documentclass{article}\\begin{document}\\name{John Doe}..."
+                    }
+                }
+            },
+            "responses": {
+                "200": {
+                    "description": "Successfully parsed resume",
+                    "schema": {
+                        "raw_latex": "string",
+                        "plain_text": "string",
+                        "name": "string",
+                        "contact": {
+                            "email": "string",
+                            "phone": "string",
+                            "linkedin": "string",
+                            "github": "string"
+                        },
+                        "education": [
+                            {
+                                "entry": "string"
+                            }
+                        ],
+                        "experience": [
+                            {
+                                "entry": "string"
+                            }
+                        ],
+                        "skills": [
+                            "string"
+                        ],
+                        "projects": [
+                            {
+                                "entry": "string"
+                            }
+                        ]
+                    }
+                },
+                "400": {
+                    "description": "Invalid LaTeX format",
+                    "schema": {
+                        "error": "string",
+                        "message": "string"
+                    }
+                }
+            },
+            "implementation": "utils.latex_parser.parse_latex_resume()"
+        },
+        {
+            "id": "parse_job",
+            "path": "/parse/job",
+            "method": "POST",
+            "description": "Parse plain text job description into structured data",
+            "requestBody": {
+                "type": "application/json",
+                "schema": {
+                    "job_text": {
+                        "type": "string",
+                        "required": true,
+                        "description": "Job description in plain text",
+                        "example": "Senior Software Engineer\\n\\nRequirements:\\n- 5+ years experience..."
+                    }
+                }
+            },
+            "responses": {
+                "200": {
+                    "description": "Successfully parsed job description",
+                    "schema": {
+                        "raw_text": "string",
+                        "title": "string",
+                        "company": "string",
+                        "requirements": [
+                            "string"
+                        ],
+                        "responsibilities": [
+                            "string"
+                        ],
+                        "qualifications": [
+                            "string"
+                        ],
+                        "skills": [
+                            "string"
+                        ],
+                        "experience_level": "string (entry|mid|senior|intern)"
+                    }
+                },
+                "400": {
+                    "description": "Invalid job description",
+                    "schema": {
+                        "error": "string",
+                        "message": "string"
+                    }
+                }
+            },
+            "implementation": "utils.job_parser.parse_job_description()"
+        },
+        {
+            "id": "initialize_interview",
+            "path": "/interview/initialize",
+            "method": "POST",
+            "description": "Initialize a new interview session with resume and job data",
+            "requestBody": {
+                "type": "application/json",
+                "schema": {
+                    "resume_data": {
+                        "type": "object",
+                        "required": true,
+                        "description": "Parsed resume data from /parse/resume"
+                    },
+                    "job_data": {
+                        "type": "object",
+                        "required": true,
+                        "description": "Parsed job data from /parse/job"
+                    },
+                    "focus_area": {
+                        "type": "string",
+                        "required": true,
+                        "enum": [
+                            "behavioral",
+                            "technical",
+                            "case",
+                            "mixed"
+                        ],
+                        "description": "Interview focus area"
+                    },
+                    "adaptive_strategy": {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Enable adaptive difficulty adjustment"
+                    },
+                    "outcome_prediction": {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Enable outcome prediction after turn 3"
+                    }
+                }
+            },
+            "responses": {
+                "200": {
+                    "description": "Interview initialized successfully",
+                    "schema": {
+                        "session_id": "string (UUID)",
+                        "strategy": {
+                            "competency_pillars": [
+                                "string"
+                            ],
+                            "difficulty_arc": {
+                                "pattern": "string",
+                                "turns": [
+                                    "string"
+                                ]
+                            },
+                            "seniority_level": "string"
+                        },
+                        "max_turns": "number",
+                        "current_turn": "number (1)",
+                        "status": "string (initialized)"
+                    }
+                },
+                "400": {
+                    "description": "Invalid request data",
+                    "schema": {
+                        "error": "string",
+                        "message": "string"
+                    }
+                },
+                "500": {
+                    "description": "Server error during initialization",
+                    "schema": {
+                        "error": "string",
+                        "message": "string"
+                    }
+                }
+            },
+            "implementation": "adk_agents.orchestrator.InterviewOrchestrator.initialize_session() + run_profiler_phase()"
+        },
+        {
+            "id": "get_question",
+            "path": "/interview/{session_id}/question",
+            "method": "GET",
+            "description": "Get the next interview question for current turn",
+            "parameters": {
+                "session_id": {
+                    "type": "string",
+                    "in": "path",
+                    "required": true,
+                    "description": "Interview session ID"
+                }
+            },
+            "responses": {
+                "200": {
+                    "description": "Question generated successfully",
+                    "schema": {
+                        "question": "string",
+                        "turn_number": "number",
+                        "competency": "string",
+                        "question_type": "string (new_competency|followup|clarification)"
+                    }
+                },
+                "404": {
+                    "description": "Session not found",
+                    "schema": {
+                        "error": "string",
+                        "message": "string"
+                    }
+                },
+                "500": {
+                    "description": "Error generating question",
+                    "schema": {
+                        "error": "string",
+                        "message": "string"
+                    }
+                }
+            },
+            "implementation": "adk_agents.orchestrator.InterviewOrchestrator.interviewer.process()"
+        },
+        {
+            "id": "submit_answer",
+            "path": "/interview/{session_id}/answer",
+            "method": "POST",
+            "description": "Submit answer to current question and get evaluation",
+            "parameters": {
+                "session_id": {
+                    "type": "string",
+                    "in": "path",
+                    "required": true,
+                    "description": "Interview session ID"
+                }
+            },
+            "requestBody": {
+                "type": "application/json",
+                "schema": {
+                    "answer": {
+                        "type": "string",
+                        "required": true,
+                        "description": "Candidate's answer to the current question"
+                    }
+                }
+            },
+            "responses": {
+                "200": {
+                    "description": "Answer evaluated successfully",
+                    "schema": {
+                        "evaluation": {
+                            "turn": "number",
+                            "scores": {
+                                "completeness": "number (1-5)",
+                                "depth": "number (1-5)",
+                                "structure": "number (1-5)",
+                                "relevance": "number (1-5)",
+                                "confidence": "number (1-5)"
+                            },
+                            "answer_type": "string",
+                            "next_move": "string (advance|probe_deeper|clarify|wrap_up)",
+                            "notable_signals": [
+                                "string"
+                            ]
+                        },
+                        "aggregate_metrics": {
+                            "avg_completeness": "number",
+                            "avg_depth": "number",
+                            "avg_structure": "number",
+                            "avg_relevance": "number",
+                            "avg_confidence": "number",
+                            "trend": "string (improving|declining|stable)"
+                        },
+                        "should_continue": "boolean",
+                        "adaptive_adjustment": {
+                            "triggered": "boolean",
+                            "reason": "string"
+                        },
+                        "outcome_prediction": {
+                            "available": "boolean",
+                            "outcome": "string (strong pass|pass|borderline|fail)",
+                            "confidence": "number (0-100)"
+                        }
+                    }
+                },
+                "400": {
+                    "description": "Invalid answer or session state",
+                    "schema": {
+                        "error": "string",
+                        "message": "string"
+                    }
+                },
+                "404": {
+                    "description": "Session not found",
+                    "schema": {
+                        "error": "string",
+                        "message": "string"
+                    }
+                }
+            },
+            "implementation": "adk_agents.orchestrator.InterviewOrchestrator.evaluator.process() + adaptive features"
+        },
+        {
+            "id": "get_conversation_history",
+            "path": "/interview/{session_id}/history",
+            "method": "GET",
+            "description": "Get complete conversation history for the session",
+            "parameters": {
+                "session_id": {
+                    "type": "string",
+                    "in": "path",
+                    "required": true,
+                    "description": "Interview session ID"
+                }
+            },
+            "responses": {
+                "200": {
+                    "description": "Conversation history retrieved",
+                    "schema": {
+                        "turns": [
+                            {
+                                "turn_number": "number",
+                                "question": "string",
+                                "answer": "string",
+                                "evaluation": {
+                                    "scores": "object",
+                                    "next_move": "string"
+                                }
+                            }
+                        ],
+                        "total_turns": "number"
+                    }
+                },
+                "404": {
+                    "description": "Session not found"
+                }
+            },
+            "implementation": "session_state.conversation_history"
+        },
+        {
+            "id": "end_interview",
+            "path": "/interview/{session_id}/end",
+            "method": "POST",
+            "description": "End interview early (before max turns)",
+            "parameters": {
+                "session_id": {
+                    "type": "string",
+                    "in": "path",
+                    "required": true,
+                    "description": "Interview session ID"
+                }
+            },
+            "responses": {
+                "200": {
+                    "description": "Interview ended successfully",
+                    "schema": {
+                        "status": "string (completed)",
+                        "total_turns": "number",
+                        "message": "string"
+                    }
+                },
+                "404": {
+                    "description": "Session not found"
+                }
+            },
+            "implementation": "Set interview_complete flag"
+        },
+        {
+            "id": "get_coaching_report",
+            "path": "/interview/{session_id}/report",
+            "method": "GET",
+            "description": "Generate and retrieve comprehensive coaching report",
+            "parameters": {
+                "session_id": {
+                    "type": "string",
+                    "in": "path",
+                    "required": true,
+                    "description": "Interview session ID"
+                }
+            },
+            "responses": {
+                "200": {
+                    "description": "Coaching report generated",
+                    "schema": {
+                        "report": {
+                            "markdown": "string (full report in markdown)",
+                            "summary": {
+                                "overall_performance": "string",
+                                "readiness_level": "string (not ready|needs work|ready|strong)",
+                                "percentile": "string"
+                            },
+                            "strengths": [
+                                "string"
+                            ],
+                            "skill_gaps": [
+                                {
+                                    "description": "string",
+                                    "severity": "string (critical|moderate|minor)",
+                                    "evidence": "string",
+                                    "impact": "string"
+                                }
+                            ],
+                            "practice_plan": {
+                                "week_1": [
+                                    {
+                                        "day": "number",
+                                        "activity": "string",
+                                        "duration": "string",
+                                        "resources": [
+                                            "string"
+                                        ]
+                                    }
+                                ],
+                                "week_2": [
+                                    "..."
+                                ],
+                                "milestones": [
+                                    "string"
+                                ]
+                            },
+                            "answer_patterns": {
+                                "consistent_strengths": [
+                                    "string"
+                                ],
+                                "consistent_weaknesses": [
+                                    "string"
+                                ],
+                                "trends": {
+                                    "answer_length": "string",
+                                    "confidence": "string",
+                                    "technical_depth": "string"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "total_agent_calls": "number",
+                            "total_turns": "number",
+                            "session_duration": "string"
+                        }
+                    }
+                },
+                "400": {
+                    "description": "Interview not complete",
+                    "schema": {
+                        "error": "string",
+                        "message": "Interview must be completed before generating report"
+                    }
+                },
+                "404": {
+                    "description": "Session not found"
+                }
+            },
+            "implementation": "adk_agents.orchestrator.InterviewOrchestrator.run_coach_phase() + get_agent_insights()"
+        },
+        {
+            "id": "get_session_status",
+            "path": "/interview/{session_id}/status",
+            "method": "GET",
+            "description": "Get current session status and progress",
+            "parameters": {
+                "session_id": {
+                    "type": "string",
+                    "in": "path",
+                    "required": true,
+                    "description": "Interview session ID"
+                }
+            },
+            "responses": {
+                "200": {
+                    "description": "Session status retrieved",
+                    "schema": {
+                        "session_id": "string",
+                        "status": "string (initialized|in_progress|completed)",
+                        "current_turn": "number",
+                        "max_turns": "number",
+                        "progress_percentage": "number (0-100)",
+                        "adaptive_strategy_enabled": "boolean",
+                        "outcome_prediction_enabled": "boolean",
+                        "interview_complete": "boolean"
+                    }
+                },
+                "404": {
+                    "description": "Session not found"
+                }
+            },
+            "implementation": "Session state metadata"
+        }
+    ],
+    "stateManagement": {
+        "description": "Frontend state management requirements",
+        "sessionState": {
+            "interview_started": {
+                "type": "boolean",
+                "default": false,
+                "description": "Whether interview has been initialized"
+            },
+            "interview_complete": {
+                "type": "boolean",
+                "default": false,
+                "description": "Whether interview has ended"
+            },
+            "session_id": {
+                "type": "string",
+                "default": null,
+                "description": "Current session UUID"
+            },
+            "current_turn": {
+                "type": "number",
+                "default": 0,
+                "description": "Current turn number (1-indexed)"
+            },
+            "current_question": {
+                "type": "string",
+                "default": null,
+                "description": "Current question being answered"
+            },
+            "conversation_history": {
+                "type": "array",
+                "default": [],
+                "description": "Array of {question, answer, evaluation} objects"
+            },
+            "resume_data": {
+                "type": "object",
+                "default": null,
+                "description": "Parsed resume data"
+            },
+            "job_data": {
+                "type": "object",
+                "default": null,
+                "description": "Parsed job description data"
+            },
+            "adaptive_strategy": {
+                "type": "boolean",
+                "default": true,
+                "description": "Adaptive strategy setting"
+            },
+            "outcome_prediction": {
+                "type": "boolean",
+                "default": true,
+                "description": "Outcome prediction setting"
+            },
+            "coaching_result": {
+                "type": "object",
+                "default": null,
+                "description": "Final coaching report data"
+            }
+        }
+    },
+    "uiComponents": {
+        "pages": [
+            {
+                "id": "setup_page",
+                "name": "Setup Page",
+                "route": "/",
+                "description": "Initial page for resume and job input",
+                "components": [
+                    {
+                        "id": "header",
+                        "type": "Header",
+                        "props": {
+                            "title": "AI Mock Interview Coach",
+                            "subtitle": "Powered by Google ADK - Adaptive, Intelligent Interview Preparation"
+                        }
+                    },
+                    {
+                        "id": "info_box",
+                        "type": "InfoBox",
+                        "props": {
+                            "variant": "info",
+                            "content": "How it works: 1. Paste resume 2. Paste job description 3. Configure settings 4. Start interview"
+                        }
+                    },
+                    {
+                        "id": "resume_input",
+                        "type": "TextArea",
+                        "props": {
+                            "label": "Your Resume (LaTeX Format)",
+                            "placeholder": "\\documentclass{article}...",
+                            "height": 300,
+                            "onChange": "handleResumeChange",
+                            "validation": "validateLatex"
+                        }
+                    },
+                    {
+                        "id": "resume_preview",
+                        "type": "Expander",
+                        "props": {
+                            "title": "Preview Parsed Resume",
+                            "content": "ResumePreviewComponent",
+                            "expandable": true
+                        }
+                    },
+                    {
+                        "id": "job_input",
+                        "type": "TextArea",
+                        "props": {
+                            "label": "Job Description (Plain Text)",
+                            "placeholder": "Senior Software Engineer...",
+                            "height": 300,
+                            "onChange": "handleJobChange",
+                            "validation": "validateJobDescription"
+                        }
+                    },
+                    {
+                        "id": "job_preview",
+                        "type": "Expander",
+                        "props": {
+                            "title": "Preview Parsed Job Description",
+                            "content": "JobPreviewComponent",
+                            "expandable": true
+                        }
+                    },
+                    {
+                        "id": "settings_section",
+                        "type": "SettingsPanel",
+                        "components": [
+                            {
+                                "id": "focus_area_select",
+                                "type": "Select",
+                                "props": {
+                                    "label": "Focus Area",
+                                    "options": [
+                                        "behavioral",
+                                        "technical",
+                                        "case",
+                                        "mixed"
+                                    ],
+                                    "default": "behavioral"
+                                }
+                            },
+                            {
+                                "id": "adaptive_checkbox",
+                                "type": "Checkbox",
+                                "props": {
+                                    "label": "Enable Adaptive Strategy",
+                                    "default": true,
+                                    "tooltip": "Adjust difficulty based on your performance"
+                                }
+                            },
+                            {
+                                "id": "prediction_checkbox",
+                                "type": "Checkbox",
+                                "props": {
+                                    "label": "Enable Outcome Prediction",
+                                    "default": true,
+                                    "tooltip": "Get early prediction of interview outcome"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "id": "start_button",
+                        "type": "Button",
+                        "props": {
+                            "label": "Start Interview",
+                            "variant": "primary",
+                            "disabled": "!canStart",
+                            "onClick": "handleStartInterview",
+                            "loading": "isInitializing"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "interview_page",
+                "name": "Interview Page",
+                "route": "/interview",
+                "description": "Active interview Q&A page",
+                "components": [
+                    {
+                        "id": "progress_bar",
+                        "type": "ProgressBar",
+                        "props": {
+                            "current": "currentTurn",
+                            "max": "maxTurns",
+                            "label": "Turn {current} of {max}"
+                        }
+                    },
+                    {
+                        "id": "conversation_history",
+                        "type": "ConversationHistory",
+                        "props": {
+                            "turns": "conversationHistory",
+                            "expandable": true,
+                            "showScores": true
+                        }
+                    },
+                    {
+                        "id": "current_question_box",
+                        "type": "QuestionBox",
+                        "props": {
+                            "question": "currentQuestion",
+                            "turnNumber": "currentTurn",
+                            "variant": "info"
+                        }
+                    },
+                    {
+                        "id": "answer_input",
+                        "type": "TextArea",
+                        "props": {
+                            "label": "Your Answer",
+                            "placeholder": "Type your answer here... Use STAR format",
+                            "height": 200,
+                            "onChange": "handleAnswerChange"
+                        }
+                    },
+                    {
+                        "id": "submit_button",
+                        "type": "Button",
+                        "props": {
+                            "label": "Submit Answer",
+                            "variant": "primary",
+                            "disabled": "!answer",
+                            "onClick": "handleSubmitAnswer",
+                            "loading": "isEvaluating"
+                        }
+                    },
+                    {
+                        "id": "end_button",
+                        "type": "Button",
+                        "props": {
+                            "label": "End Interview Early",
+                            "variant": "secondary",
+                            "onClick": "handleEndInterview"
+                        }
+                    },
+                    {
+                        "id": "prediction_alert",
+                        "type": "Alert",
+                        "props": {
+                            "variant": "info",
+                            "show": "showPrediction",
+                            "content": "Predicted Outcome: {outcome} (Confidence: {confidence}%)"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "results_page",
+                "name": "Results Page",
+                "route": "/results",
+                "description": "Coaching report and insights page",
+                "components": [
+                    {
+                        "id": "completion_message",
+                        "type": "Alert",
+                        "props": {
+                            "variant": "success",
+                            "content": "Great job! Your interview is complete."
+                        }
+                    },
+                    {
+                        "id": "coaching_report",
+                        "type": "MarkdownDisplay",
+                        "props": {
+                            "content": "coachingReport.markdown",
+                            "title": "Your Coaching Report"
+                        }
+                    },
+                    {
+                        "id": "insights_panel",
+                        "type": "InsightsPanel",
+                        "components": [
+                            {
+                                "id": "performance_benchmark",
+                                "type": "BenchmarkCard",
+                                "props": {
+                                    "readinessLevel": "benchmark.readiness_level",
+                                    "percentile": "benchmark.percentile"
+                                }
+                            },
+                            {
+                                "id": "skill_gaps",
+                                "type": "SkillGapsList",
+                                "props": {
+                                    "gaps": "skillGaps",
+                                    "maxDisplay": 5
+                                }
+                            },
+                            {
+                                "id": "answer_patterns",
+                                "type": "PatternsCard",
+                                "props": {
+                                    "strengths": "patterns.consistent_strengths",
+                                    "weaknesses": "patterns.consistent_weaknesses"
+                                }
+                            },
+                            {
+                                "id": "system_stats",
+                                "type": "StatsCard",
+                                "props": {
+                                    "totalTurns": "conversationHistory.length",
+                                    "agentCalls": "metadata.total_agent_calls"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "id": "restart_button",
+                        "type": "Button",
+                        "props": {
+                            "label": "Start New Interview",
+                            "variant": "primary",
+                            "onClick": "handleRestart"
+                        }
+                    }
+                ]
+            }
+        ],
+        "sidebar": {
+            "id": "sidebar",
+            "components": [
+                {
+                    "id": "about_section",
+                    "type": "InfoSection",
+                    "props": {
+                        "title": "About",
+                        "content": "Features list with icons"
+                    }
+                },
+                {
+                    "id": "progress_section",
+                    "type": "ProgressSection",
+                    "props": {
+                        "show": "interviewStarted && !interviewComplete",
+                        "currentTurn": "currentTurn",
+                        "maxTurns": "maxTurns",
+                        "questionsAsked": "conversationHistory.length",
+                        "adaptiveEnabled": "adaptiveStrategy",
+                        "predictionEnabled": "outcomePrediction"
+                    }
+                },
+                {
+                    "id": "tips_section",
+                    "type": "TipsSection",
+                    "props": {
+                        "tips": [
+                            "Use STAR format",
+                            "Be specific with metrics",
+                            "Keep answers concise",
+                            "Relate to job requirements"
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    "styling": {
+        "colorPalette": {
+            "primary": "#1f77b4",
+            "primaryHover": "#155a8a",
+            "secondary": "#2c3e50",
+            "success": "#28a745",
+            "successBg": "#d4edda",
+            "info": "#1f77b4",
+            "infoBg": "#e8f4f8",
+            "warning": "#ffc107",
+            "warningBg": "#fff3cd",
+            "text": "#333",
+            "textLight": "#666",
+            "border": "#ddd",
+            "background": "#fff"
+        },
+        "typography": {
+            "mainHeader": {
+                "fontSize": "2.5rem",
+                "fontWeight": "bold",
+                "color": "#1f77b4"
+            },
+            "subHeader": {
+                "fontSize": "1.2rem",
+                "color": "#666"
+            },
+            "sectionHeader": {
+                "fontSize": "1.5rem",
+                "fontWeight": "bold",
+                "color": "#2c3e50",
+                "borderBottom": "2px solid #1f77b4"
+            }
+        },
+        "components": {
+            "button": {
+                "primary": {
+                    "backgroundColor": "#1f77b4",
+                    "color": "white",
+                    "padding": "0.75rem",
+                    "borderRadius": "0.5rem",
+                    "fontWeight": "bold"
+                },
+                "secondary": {
+                    "backgroundColor": "#6c757d",
+                    "color": "white"
+                }
+            },
+            "infoBox": {
+                "backgroundColor": "#e8f4f8",
+                "padding": "1rem",
+                "borderRadius": "0.5rem",
+                "borderLeft": "4px solid #1f77b4"
+            },
+            "successBox": {
+                "backgroundColor": "#d4edda",
+                "borderLeft": "4px solid #28a745"
+            },
+            "warningBox": {
+                "backgroundColor": "#fff3cd",
+                "borderLeft": "4px solid #ffc107"
+            }
+        }
+    },
+    "dataFlow": {
+        "setupFlow": [
+            "User pastes resume → Call /parse/resume → Display preview",
+            "User pastes job → Call /parse/job → Display preview",
+            "User configures settings → Store in state",
+            "User clicks Start → Call /interview/initialize → Navigate to interview page"
+        ],
+        "interviewFlow": [
+            "Page loads → Call /interview/{id}/question → Display question",
+            "User types answer → Store in local state",
+            "User clicks Submit → Call /interview/{id}/answer → Display evaluation",
+            "If should_continue → Increment turn → Get next question",
+            "If !should_continue → Navigate to results page"
+        ],
+        "resultsFlow": [
+            "Page loads → Call /interview/{id}/report → Display report",
+            "Display insights from report data",
+            "User clicks Restart → Clear state → Navigate to setup page"
+        ]
+    },
+    "errorHandling": {
+        "scenarios": [
+            {
+                "error": "API_KEY_MISSING",
+                "display": "Error: API key not configured. Please set GOOGLE_API_KEY.",
+                "action": "Block app usage, show setup instructions"
+            },
+            {
+                "error": "RESUME_PARSE_ERROR",
+                "display": "Error parsing resume. Please check LaTeX syntax.",
+                "action": "Show error message, allow retry"
+            },
+            {
+                "error": "JOB_PARSE_ERROR",
+                "display": "Error parsing job description. Please check format.",
+                "action": "Show error message, allow retry"
+            },
+            {
+                "error": "INTERVIEW_INIT_ERROR",
+                "display": "Error starting interview. Please try again.",
+                "action": "Show error message, allow retry"
+            },
+            {
+                "error": "QUESTION_GENERATION_ERROR",
+                "display": "Error generating question. Please try again.",
+                "action": "Show error message, allow retry"
+            },
+            {
+                "error": "ANSWER_EVALUATION_ERROR",
+                "display": "Error evaluating answer. Please try again.",
+                "action": "Show error message, allow retry"
+            },
+            {
+                "error": "SESSION_NOT_FOUND",
+                "display": "Session expired. Please start a new interview.",
+                "action": "Clear state, navigate to setup page"
+            },
+            {
+                "error": "NETWORK_ERROR",
+                "display": "Network error. Please check your connection.",
+                "action": "Show error message, allow retry"
+            }
+        ]
+    },
+    "performanceConsiderations": {
+        "latency": {
+            "parse_resume": "< 1 second",
+            "parse_job": "< 1 second",
+            "initialize_interview": "5-10 seconds (includes profiler)",
+            "get_question": "3-7 seconds",
+            "submit_answer": "3-5 seconds (evaluation)",
+            "get_coaching_report": "10-15 seconds"
+        },
+        "optimization": {
+            "caching": "Cache parsed resume/job data in session",
+            "loading_states": "Show spinners for all async operations",
+            "debouncing": "Debounce text input parsing (500ms)",
+            "lazy_loading": "Load conversation history on demand",
+            "pagination": "Paginate long conversation histories"
+        }
+    },
+    "additionalFeatures": {
+        "optional": [
+            {
+                "feature": "Export Report",
+                "description": "Download coaching report as PDF or Markdown",
+                "endpoint": "/interview/{session_id}/export",
+                "formats": [
+                    "pdf",
+                    "markdown",
+                    "json"
+                ]
+            },
+            {
+                "feature": "Save Session",
+                "description": "Save interview session for later review",
+                "endpoint": "/interview/{session_id}/save",
+                "storage": "Local storage or backend database"
+            },
+            {
+                "feature": "Session History",
+                "description": "View past interview sessions",
+                "endpoint": "/sessions",
+                "method": "GET"
+            },
+            {
+                "feature": "Real-time Typing Indicator",
+                "description": "Show when AI is generating response",
+                "implementation": "WebSocket or polling"
+            },
+            {
+                "feature": "Voice Input",
+                "description": "Speech-to-text for answers",
+                "implementation": "Web Speech API"
+            }
+        ]
+    }
+}

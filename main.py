@@ -1,20 +1,28 @@
-"""AI Mock Interview Coach - CLI Entry Point."""
-import json
+"""AI Mock Interview Coach - ADK-Based Entry Point.
+
+This version uses Google's Agent Development Kit (ADK) patterns for a truly agentic system.
+"""
 import sys
-from typing import Dict, Any
+from typing import Dict
 
 from google.genai import Client
 import config
-import state
+from adk_agents.orchestrator import InterviewOrchestrator
 
 
 def print_banner():
     """Print welcome banner."""
     print("\n" + "=" * 60)
-    print("🎯 AI Mock Interview Coach")
+    print("🎯 AI Mock Interview Coach (ADK-Powered)")
     print("=" * 60)
-    print("\nWelcome! I'll conduct a mock interview to help you prepare.")
-    print("Let's start by understanding what you're preparing for.\n")
+    print("\nWelcome! This is an advanced multi-agent system powered by")
+    print("Google's Agent Development Kit (ADK) patterns.")
+    print("\nFeatures:")
+    print("  • Adaptive strategy adjustment")
+    print("  • Outcome prediction")
+    print("  • Pattern detection")
+    print("  • Agent memory and reflection")
+    print("\nLet's start by understanding what you're preparing for.\n")
 
 
 def collect_candidate_info() -> Dict[str, str]:
@@ -37,178 +45,24 @@ def collect_candidate_info() -> Dict[str, str]:
         print("   Please choose: behavioral / technical / case / mixed")
         focus = input("   → ").strip().lower()
     
+    print("\n🔧 Advanced Features")
+    print("   Enable adaptive strategy? (y/n)")
+    adaptive = input("   → ").strip().lower() == 'y'
+    
+    print("   Enable outcome prediction? (y/n)")
+    prediction = input("   → ").strip().lower() == 'y'
+    
     return {
         "role": role,
         "background": background if background else "No background provided",
         "focus_area": focus,
+        "adaptive_strategy": adaptive,
+        "outcome_prediction": prediction,
     }
 
 
-def run_profiler(client: Client, candidate_info: Dict[str, str]) -> Dict[str, Any]:
-    """Run the Profiler agent to create interview strategy."""
-    print("\n🔍 Analyzing your profile and creating interview strategy...")
-    
-    from agents import get_profiler_prompt
-    prompt_text = get_profiler_prompt()
-    
-    user_message = f"""
-Candidate Information:
-- Role: {candidate_info['role']}
-- Background: {candidate_info['background']}
-- Focus Area: {candidate_info['focus_area']}
-
-Create the interview strategy JSON.
-"""
-    
-    response = client.models.generate_content(
-        model=config.MODEL,
-        contents=user_message,
-        config={
-            "system_instruction": prompt_text,
-            "temperature": 0.7,
-            "response_mime_type": "application/json",
-        },
-    )
-    
-    strategy = json.loads(response.text)
-    print("✅ Strategy created!\n")
-    return strategy
-
-
-def run_interview_turn(
-    client: Client,
-    session_state: Dict[str, Any],
-    turn_number: int,
-) -> bool:
-    """
-    Run a single interview turn (question + answer + evaluation).
-    
-    Returns:
-        True if interview should continue, False if it should end
-    """
-    from agents import get_interviewer_prompt, get_turn_evaluator_prompt
-    interviewer_prompt = get_interviewer_prompt()
-    evaluator_prompt = get_turn_evaluator_prompt()
-    
-    # Build context for interviewer
-    strategy = session_state[state.SESSION_STRATEGY]
-    last_signal = session_state.get(state.LAST_EVALUATOR_SIGNAL, "advance")
-    history = session_state[state.CONVERSATION_HISTORY]
-    
-    context = f"""
-Session Strategy:
-{json.dumps(strategy, indent=2)}
-
-Current Turn: {turn_number}
-Last Evaluator Signal: {last_signal}
-
-Conversation History:
-{json.dumps(history, indent=2)}
-
-Based on the strategy and signal, generate your next question. Remember to follow the competency pillars and difficulty arc.
-"""
-    
-    # Interviewer generates question
-    interviewer_response = client.models.generate_content(
-        model=config.MODEL,
-        contents=context,
-        config={
-            "system_instruction": interviewer_prompt,
-            "temperature": 0.8,
-        },
-    )
-    
-    question = interviewer_response.text.strip()
-    
-    # Present question and get answer
-    print(f"\n🎤 Interviewer: {question}\n")
-    print("💭 You: ", end="", flush=True)
-    answer = input().strip()
-    
-    while not answer:
-        print("💭 You: ", end="", flush=True)
-        answer = input().strip()
-    
-    # Record conversation
-    state.add_conversation_turn(session_state, question, answer)
-    
-    # Evaluator scores the answer
-    eval_context = f"""
-Session Strategy:
-{json.dumps(strategy, indent=2)}
-
-Current Turn: {turn_number}
-
-Question Asked: {question}
-
-Candidate's Answer: {answer}
-
-Evaluate this answer and provide your JSON assessment.
-"""
-    
-    evaluator_response = client.models.generate_content(
-        model=config.MODEL,
-        contents=eval_context,
-        config={
-            "system_instruction": evaluator_prompt,
-            "temperature": 0.3,
-            "response_mime_type": "application/json",
-        },
-    )
-    
-    evaluation = json.loads(evaluator_response.text)
-    evaluation["turn"] = turn_number
-    
-    # Store evaluation
-    state.append_turn_score(session_state, evaluation)
-    session_state[state.LAST_EVALUATOR_SIGNAL] = evaluation["next_move"]
-    
-    # Check if interview should end
-    if evaluation["next_move"] == "wrap_up" or turn_number >= config.MAX_INTERVIEW_TURNS:
-        return False
-    
-    return True
-
-
-def run_coach(client: Client, session_state: Dict[str, Any]) -> str:
-    """Run the Coach agent to generate final feedback."""
-    print("\n📊 Analyzing your interview performance...")
-    
-    from agents import get_coach_prompt
-    coach_prompt = get_coach_prompt()
-    
-    context = f"""
-Complete Session Data:
-
-Candidate Role: {session_state[state.CANDIDATE_ROLE]}
-Focus Area: {session_state[state.FOCUS_AREA]}
-
-Session Strategy:
-{json.dumps(session_state[state.SESSION_STRATEGY], indent=2)}
-
-Conversation History:
-{json.dumps(session_state[state.CONVERSATION_HISTORY], indent=2)}
-
-Turn Scores:
-{json.dumps(session_state[state.TURN_SCORES], indent=2)}
-
-Generate your comprehensive coaching report in Markdown format.
-"""
-    
-    response = client.models.generate_content(
-        model=config.MODEL,
-        contents=context,
-        config={
-            "system_instruction": coach_prompt,
-            "temperature": 0.7,
-        },
-    )
-    
-    return response.text
-
-
 def main():
-    """Main entry point."""
+    """Main entry point for ADK-based interview coach."""
     # Check API key
     if not config.GOOGLE_API_KEY:
         print("❌ Error: GOOGLE_API_KEY not found in environment")
@@ -222,27 +76,40 @@ def main():
     print_banner()
     candidate_info = collect_candidate_info()
     
-    # Initialize session state
-    session_state = state.initialize_state(
+    # Initialize orchestrator
+    orchestrator = InterviewOrchestrator(client)
+    
+    # Initialize session
+    orchestrator.initialize_session(
         role=candidate_info["role"],
         background=candidate_info["background"],
         focus_area=candidate_info["focus_area"],
     )
     
-    # Run profiler
-    strategy = run_profiler(client, candidate_info)
-    session_state[state.SESSION_STRATEGY] = strategy
+    # Run profiler phase
+    profiler_result = orchestrator.run_profiler_phase()
     
     # Start interview
     print("\n" + "=" * 60)
     print("🎬 Let's begin the interview!")
     print("=" * 60)
     
-    # Run interview loop
+    # Run interview loop with adaptive features
     turn = 1
     while turn <= config.MAX_INTERVIEW_TURNS:
-        should_continue = run_interview_turn(client, session_state, turn)
-        state.increment_turn(session_state)
+        should_continue = orchestrator.run_interview_turn(turn)
+        
+        # Enable adaptive strategy if requested
+        if candidate_info["adaptive_strategy"]:
+            orchestrator.enable_adaptive_strategy()
+        
+        # Enable outcome prediction if requested
+        if candidate_info["outcome_prediction"] and turn == 3:
+            prediction = orchestrator.enable_outcome_prediction()
+            if prediction:
+                print(f"\n🔮 Predicted Outcome: {prediction.get('outcome', 'N/A')}")
+                print(f"   Confidence: {prediction.get('confidence', 'N/A')}%")
+        
         turn += 1
         
         if not should_continue:
@@ -253,16 +120,56 @@ def main():
     print("🎓 Interview Complete!")
     print("=" * 60)
     
-    coaching_report = run_coach(client, session_state)
-    session_state[state.COACHING_REPORT] = coaching_report
+    coach_result = orchestrator.run_coach_phase()
     
     # Display report
     print("\n" + "=" * 60)
     print("📋 YOUR COACHING REPORT")
     print("=" * 60)
-    print(coaching_report)
+    print(coach_result["report"])
+    
+    # Display additional insights
     print("\n" + "=" * 60)
-    print("✨ Thank you for using AI Mock Interview Coach!")
+    print("🧠 AGENT INSIGHTS")
+    print("=" * 60)
+    
+    insights = orchestrator.get_agent_insights()
+    
+    print("\n📊 Performance Benchmark:")
+    benchmark = insights["coach"].get("benchmark", {})
+    if benchmark:
+        print(f"   Readiness: {benchmark.get('readiness_level', 'N/A')}")
+        print(f"   Percentile: {benchmark.get('percentile', 'N/A')}")
+    
+    print("\n🎯 Skill Gaps Identified:")
+    skill_gaps = insights["coach"].get("skill_gaps", {})
+    if skill_gaps and isinstance(skill_gaps, dict):
+        gaps_list = skill_gaps.get("gaps", [])
+        for i, gap in enumerate(gaps_list[:3], 1):
+            if isinstance(gap, dict):
+                print(f"   {i}. {gap.get('description', 'N/A')} (Severity: {gap.get('severity', 'N/A')})")
+    
+    print("\n📈 Answer Patterns Detected:")
+    patterns = insights["evaluator"].get("answer_patterns", {})
+    if patterns and isinstance(patterns, dict):
+        strengths = patterns.get("consistent_strengths", [])
+        if strengths:
+            print(f"   Strengths: {', '.join(strengths[:2])}")
+        weaknesses = patterns.get("consistent_weaknesses", [])
+        if weaknesses:
+            print(f"   Weaknesses: {', '.join(weaknesses[:2])}")
+    
+    # Display orchestration metadata
+    print("\n" + "=" * 60)
+    print("🤖 SYSTEM METADATA")
+    print("=" * 60)
+    print(f"   Total Agent Calls: {orchestrator.metadata['total_agent_calls']}")
+    print(f"   Interview Turns: {turn - 1}")
+    print(f"   Adaptive Strategy: {'Enabled' if candidate_info['adaptive_strategy'] else 'Disabled'}")
+    print(f"   Outcome Prediction: {'Enabled' if candidate_info['outcome_prediction'] else 'Disabled'}")
+    
+    print("\n" + "=" * 60)
+    print("✨ Thank you for using AI Mock Interview Coach (ADK-Powered)!")
     print("=" * 60 + "\n")
 
 
