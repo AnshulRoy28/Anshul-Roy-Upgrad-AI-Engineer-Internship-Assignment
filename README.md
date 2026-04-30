@@ -3,9 +3,7 @@
 An intelligent mock interview system powered by Google's Agent Development Kit (ADK) and Gemini API. Features a multi-agent architecture with adaptive difficulty, real-time evaluation, outcome prediction, and personalized coaching.
 
 **UpGrad AI Engineer Internship Assignment - Anshul Roy**
-## 🌐 Live Demo
 
-👉 **Try it out:** https://ai-interview-coach-325599881727.us-central1.run.app/index.html
 ---
 
 ## 📋 Table of Contents
