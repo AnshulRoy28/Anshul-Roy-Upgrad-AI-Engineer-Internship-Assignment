@@ -1,7 +1,7 @@
 // ===== State Management =====
 const state = {
     apiKey: localStorage.getItem('interviewai_apikey') || '',
-    baseUrl: localStorage.getItem('interviewai_baseurl') || 'http://localhost:8000/api/v1',
+    baseUrl: localStorage.getItem('interviewai_baseurl') || '/api/v1',
     sessionId: null,
     currentTurn: 0,
     maxTurns: 8,

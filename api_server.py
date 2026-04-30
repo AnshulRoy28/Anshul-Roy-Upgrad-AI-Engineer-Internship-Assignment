@@ -1,14 +1,14 @@
 """Flask REST API server for AI Mock Interview Coach.
 
 This server provides REST endpoints for the frontend to interact with
-the ADK-based interview system.
+the ADK-based interview system, and also serves the frontend static files.
 """
 import os
 import uuid
 import logging
 from datetime import datetime, timedelta
 from typing import Dict, Any, Optional
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from google.genai import Client
 import config
@@ -24,8 +24,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Initialize Flask app
-app = Flask(__name__)
+# Initialize Flask app with static folder
+app = Flask(__name__, static_folder='Frontend', static_url_path='')
 CORS(app)  # Enable CORS for frontend
 
 # Session storage (in-memory for now)
@@ -675,19 +675,46 @@ def get_session_status(session_id: str):
         }), 500
 
 
+# ===== Frontend Routes =====
+
+@app.route('/')
+def serve_index():
+    """Serve the main landing page."""
+    return send_from_directory(app.static_folder, 'index.html')
+
+
+@app.route('/interview.html')
+def serve_interview():
+    """Serve the interview page."""
+    return send_from_directory(app.static_folder, 'interview.html')
+
+
+@app.route('/<path:path>')
+def serve_static(path):
+    """Serve static files (CSS, JS, images, etc.)."""
+    try:
+        return send_from_directory(app.static_folder, path)
+    except Exception as e:
+        logger.error(f"Error serving static file {path}: {str(e)}")
+        return jsonify({'error': 'File not found'}), 404
+
+
 if __name__ == '__main__':
     # Check API key
     if not config.GOOGLE_API_KEY:
         print("❌ Error: GOOGLE_API_KEY not found in environment")
-        print("   Please set it in your .env file")
+        print("   Please set it in your .env file or Render environment variables")
         exit(1)
     
+    # Get port from environment (for Render) or default to 8000
+    port = int(os.environ.get('PORT', 8000))
+    
     print("\n" + "=" * 60)
-    print("🚀 AI Mock Interview Coach - API Server")
+    print("🚀 AI Mock Interview Coach - Unified Server")
     print("=" * 60)
-    print(f"\n📡 Server starting on http://localhost:8000")
-    print(f"📚 API Base URL: http://localhost:8000/api/v1")
+    print(f"\n🌐 Frontend: http://localhost:{port}")
+    print(f"📚 API Base: http://localhost:{port}/api/v1")
     print(f"\n✅ Ready to accept requests!\n")
     
     # Run server
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    app.run(host='0.0.0.0', port=port, debug=False)

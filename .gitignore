@@ -26,29 +26,35 @@ env/
 ENV/
 .venv
 
+# Environment Variables
+.env
+.env.local
+
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
-
-# Environment variables
-.env
-.env.local
-
-# OS
 .DS_Store
-Thumbs.db
 
 # Logs
 *.log
+logs/
 
 # Testing
 .pytest_cache/
 .coverage
 htmlcov/
 
-# Project specific
-session_logs/
-transcripts/
+# Render
+.render/
+
+# Session data (if using file-based sessions)
+flask_session/
+sessions/
+
+# Temporary files
+*.tmp
+*.bak
+.cache/
