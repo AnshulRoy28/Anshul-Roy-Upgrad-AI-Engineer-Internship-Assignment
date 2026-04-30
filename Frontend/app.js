@@ -565,6 +565,11 @@ function handleRestart() {
 
 // ===== Event Listeners =====
 document.addEventListener('DOMContentLoaded', async () => {
+    // Ensure we start at setup view if no active session
+    if (!state.sessionId) {
+        showView('setup-view');
+    }
+    
     // Check API health on startup
     const isHealthy = await checkApiHealth();
     updateConnectionStatus(isHealthy);
